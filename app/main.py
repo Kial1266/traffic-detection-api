@@ -33,7 +33,6 @@ app.add_middleware(
     allow_headers=["*"],               # Allowed all header to access
 )
 
-
 @app.post("/upload-gambar/")
 async def upload_gambar(file: UploadFile = File(...)):
     if not file.content_type.startswith("image/"):
@@ -53,9 +52,6 @@ async def upload_gambar(file: UploadFile = File(...)):
         except Exception as e:
             print (f"Roboflow error: {e}")
             raise HTTPException(status_code=502, message= "Cannot Connect to Roboflow Server")
-
-
-
 
         predictions = result[0]["predictions"]["predictions"]
     
@@ -107,8 +103,8 @@ async def upload_gambar(file: UploadFile = File(...)):
 @app.get("/analysis")
 async def get_all_analysis():
     # Mengambil 100 data terbaru dari MongoDB
-    cursor = collection.find().sort("timestamp", -1).limit(100)
-    logs = await cursor.to_list(length=100)
+    cursor = collection.find().sort("timestamp", -1).limit(10)
+    logs = await cursor.to_list(length=10)
     for log in logs:
         log["_id"] = str(log["_id"]) # Convert ObjectId ke string agar JSON aman
     return logs
