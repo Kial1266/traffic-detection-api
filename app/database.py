@@ -1,9 +1,17 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
-# Ganti dengan connection string MongoDB kamu (Lokal atau Atlas)
-MONGO_DETAILS = "mongodb://localhost:27017"
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-client = AsyncIOMotorClient(MONGO_DETAILS)
-database = client.traffic_db
-collection = database.get_collection("traffic_logs")
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/traffic_db")
+
+engine = create_engine(
+	DATABASE_URL,
+	pool_pre_ping=True,
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
